@@ -14,26 +14,38 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@Configuration
-@EnableJpaRepositories(basePackages = "com.my.xunwu.repository")
-@EnableTransactionManagement
+/**
+ * JPA配置类,数据库实体配置
+ * @author hcz
+ * 2019.7.24
+ */
+@Configuration//配置类
+@EnableJpaRepositories(basePackages = "com.my.xunwu.repository")//JPA基础包
+@EnableTransactionManagement//事物管理
 public class JPAConfig {
 
+	/**
+	 * 数据库连接
+	 * @return
+	 */
 	@Bean
-	@ConfigurationProperties(prefix = "spring.datasource")
+	@ConfigurationProperties(prefix = "spring.datasource")//application.properties的spring.datasource
 	public DataSource dataSource() {
 		return DataSourceBuilder.create().build();
 	}
-	
+	/**
+	 * 实体管理
+	 * @return
+	 */
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-		jpaVendorAdapter.setGenerateDdl(false);//sql语句控制在自己手上
+		jpaVendorAdapter.setGenerateDdl(false);//是否为sql，sql语句掌握在自己手中
 		
 		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
-		entityManagerFactory.setDataSource(dataSource());
-		entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter);
-		entityManagerFactory.setPackagesToScan("com.my.xunwu.entity");
+		entityManagerFactory.setDataSource(dataSource());//连接数据库
+		entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter);//使用Hibernate
+		entityManagerFactory.setPackagesToScan("com.my.xunwu.entity");//扫描实体
 		return entityManagerFactory;
 	}
 	
