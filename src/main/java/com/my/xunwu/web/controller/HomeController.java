@@ -17,13 +17,31 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String index(Model model) {
-		model.addAttribute("name","环游记");
 		return "index";
 	}
 	
-	@GetMapping("/get")
-	@ResponseBody
-	public ApiResponse get() {
-		return ApiResponse.ofMessage(200, "OK");
+	@GetMapping("/404")
+	public String notFoundPage() {
+		return "404";
+	}
+	
+	@GetMapping("/403")
+	public String accessError() {
+		return "403";
+	}
+	
+	@GetMapping("/500")
+	public String interalError() {
+		return "500";
+	}
+	
+	@GetMapping("/400")
+	public String badRequest() {
+		return "400";
+	}
+	
+	@GetMapping("/logout")
+	public String logoutPage() {
+		return "logout";
 	}
 }

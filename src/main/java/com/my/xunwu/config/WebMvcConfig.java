@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -57,6 +58,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
 		templateEngine.setTemplateResolver(templateResolver());
 		//支持spring EL表达式
 		templateEngine.setEnableSpringELCompiler(true);
+		
+		//支持SpringSecurity方言
+		SpringSecurityDialect securityDialect = new SpringSecurityDialect();
+		templateEngine.setDialect(securityDialect);
 		return templateEngine;
 	}
 	
