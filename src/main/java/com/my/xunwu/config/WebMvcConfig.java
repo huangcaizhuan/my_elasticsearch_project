@@ -1,6 +1,8 @@
 package com.my.xunwu.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -22,6 +24,9 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware{
 
+	@Value("${spring.thymeleaf.cache}")
+    private boolean thymeleafCacheEnable = true;
+	
 	private ApplicationContext applicationContext;
 	
 	@Override
@@ -44,8 +49,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
 	@ConfigurationProperties(prefix="spring.thymeleaf")
 	public SpringResourceTemplateResolver templateResolver() {
 		SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-		templateResolver.setApplicationContext(applicationContext);
+		templateResolver.setApplicationContext(this.applicationContext);
 		templateResolver.setCharacterEncoding("UTF-8");
+		templateResolver.setCacheable(thymeleafCacheEnable);
 		return templateResolver;
 	}
 	
@@ -59,9 +65,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
 		//支持spring EL表达式
 		templateEngine.setEnableSpringELCompiler(true);
 		
-		//支持SpringSecurity方言
-		SpringSecurityDialect securityDialect = new SpringSecurityDialect();
-		templateEngine.setDialect(securityDialect);
+		//支持SpringSecurity方言(!!!!不知道为社么加这两句导致Thymeleaf用不了)
+		/*SpringSecurityDialect securityDialect = new SpringSecurityDialect();
+		templateEngine.setDialect(securityDialect);*/
 		return templateEngine;
 	}
 	
@@ -74,5 +80,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
 		viewResolver.setTemplateEngine(templateEngine());
 		return viewResolver;
 	}
+	
+	/**
+     * Bean Util
+     * @return
+     */
+//    @Bean
+//    public ModelMapper modelMapper() {
+//        return new ModelMapper();
+//    }
 	
 }
