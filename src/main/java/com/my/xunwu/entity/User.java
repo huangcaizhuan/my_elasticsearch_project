@@ -1,6 +1,8 @@
 package com.my.xunwu.entity;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,10 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name="user")
-public class User {
+public class User implements UserDetails{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +44,13 @@ public class User {
 	private Date lastUpdateTime;
 	
 	private String avatar;
-
+	
+	/**
+	 * 权限认证
+	 */
+	@Transient//此字段为非数据库里的字段
+	private List<GrantedAuthority> authorityList;
+	
 	public Long getId() {
 		return id;
 	}
@@ -117,5 +129,49 @@ public class User {
 
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return this.authorityList;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return name;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	public List<GrantedAuthority> getAuthorityList() {
+		return authorityList;
+	}
+
+	public void setAuthorityList(List<GrantedAuthority> authorityList) {
+		this.authorityList = authorityList;
 	}
 }

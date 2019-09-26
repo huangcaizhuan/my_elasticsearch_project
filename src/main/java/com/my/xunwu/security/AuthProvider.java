@@ -3,6 +3,8 @@ package com.my.xunwu.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -31,11 +33,11 @@ public class AuthProvider implements AuthenticationProvider{
 		if(user == null) {
 			throw new AuthenticationCredentialsNotFoundException("authError");
 		}
-		user.getPassword().equals(inputPassword);
+		
 		if(this.passwordEncoder.isPasswordValid(user.getPassword(), inputPassword, user.getId())) {
-			
+			return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		}
-		return null;
+		throw new BadCredentialsException("authError");
 	}
 
 	@Override
