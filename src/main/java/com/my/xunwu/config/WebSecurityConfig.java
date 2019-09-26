@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import com.my.xunwu.security.AuthProvider;
+import com.my.xunwu.security.LoginUrlEntryPoint;
 
 /**
  * 
@@ -38,7 +39,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			.and()
 			.formLogin()
 			.loginProcessingUrl("/login")//配置角色登录入口
-			.and();
+			.and()
+			.logout()
+			.logoutUrl("/logout")
+			.logoutSuccessUrl("/logout/page")
+			.deleteCookies("JSESSIONID")
+			.invalidateHttpSession(true)
+			.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(urlEntryPoint())
+			.accessDeniedPage("/403");
 		
 		http.csrf().disable();//先关掉防御策略
 		http.headers().frameOptions().sameOrigin();//同源策略
@@ -57,8 +67,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		//数据库登录认证
 		auth.authenticationProvider(authProvider()).eraseCredentials(true);
 	}
+	
 	@Bean
 	public AuthProvider authProvider() {
 		 return new AuthProvider();
+	}
+	
+	@Bean
+	public LoginUrlEntryPoint urlEntryPoint() {
+		 return new LoginUrlEntryPoint("/user/login");
 	}
 }
