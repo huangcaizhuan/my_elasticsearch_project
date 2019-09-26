@@ -65,7 +65,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
 		//支持spring EL表达式
 		templateEngine.setEnableSpringELCompiler(true);
 		
-		//支持SpringSecurity方言(!!!!不知道为社么加这两句导致Thymeleaf用不了)
+		//支持SpringSecurity方言(!!!!不知道为什么加这两句导致Thymeleaf用不了)
 		/*SpringSecurityDialect securityDialect = new SpringSecurityDialect();
 		templateEngine.setDialect(securityDialect);*/
 		return templateEngine;
