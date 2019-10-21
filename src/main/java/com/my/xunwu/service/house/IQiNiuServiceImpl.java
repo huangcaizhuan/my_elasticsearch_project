@@ -6,6 +6,7 @@ import java.io.InputStream;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -19,7 +20,7 @@ import com.qiniu.util.StringMap;
  * @author hcz
  * @date 2019.9.29
  */
-
+@Service
 public class IQiNiuServiceImpl implements IQiNiuService,InitializingBean{
 
 	@Autowired
@@ -28,7 +29,7 @@ public class IQiNiuServiceImpl implements IQiNiuService,InitializingBean{
 	private BucketManager bucketManager;
 	@Autowired
 	private Auth auth;
-	@Value("#{qiniu.Bucket}")
+	@Value("${qiniu.Bucket}")
 	private String bucket;
 	private StringMap putPolicy;
 	
@@ -45,14 +46,23 @@ public class IQiNiuServiceImpl implements IQiNiuService,InitializingBean{
 
 	@Override
 	public Response uploadFile(InputStream inputStream) throws QiniuException {
-		// TODO Auto-generated method stub
-		return null;
+		Response response = this.uploadManager.put(inputStream, null, getUploadToken(),null,null);
+		int retry =0;
+		while(response.needRetry() && retry <3) {
+			response = this.uploadManager.put(inputStream, null, getUploadToken(),null,null);
+			retry ++;
+		}
+		return response;
 	}
 
 	@Override
 	public Response delete(String key) throws QiniuException {
-		// TODO Auto-generated method stub
-		return null;
+		Response response = bucketManager.delete(this.bucket, key);
+		int retry =0;
+		while(response.needRetry() && retry ++ <3) {
+			response = bucketManager.delete(this.bucket, key);
+		}
+		return response;
 	}
 
 	@Override

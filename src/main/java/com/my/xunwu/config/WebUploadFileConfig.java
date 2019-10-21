@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import com.google.gson.Gson;
 import com.qiniu.common.Zone;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.UploadManager;
@@ -98,5 +99,10 @@ public class WebUploadFileConfig {
     @Bean
     public BucketManager bucketManager() {
     	return new BucketManager(auth(),qiniuConfig());
+    }
+    
+    @Bean
+    public Gson gson() {
+        return new Gson();
     }
 }

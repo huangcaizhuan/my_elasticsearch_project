@@ -29,4 +29,14 @@ public class QiNiuServiceTests extends ApplicationTests{
         }
     }
 
+    @Test
+    public void testDelete() {
+    	String key="FvyNceBAaZF6TBh6OZpcEKlhuACG";
+    	 try {
+			Response response =qiNiuService.delete(key);
+			Assert.assertTrue(response.isOK());
+		} catch (QiniuException e) {
+			e.printStackTrace();
+		}
+    }
 }
