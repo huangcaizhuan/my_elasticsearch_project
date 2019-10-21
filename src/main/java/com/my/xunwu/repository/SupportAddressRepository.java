@@ -1,0 +1,15 @@
+package com.my.xunwu.repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+import com.my.xunwu.entity.SupportAddress;
+
+public interface SupportAddressRepository extends CrudRepository<SupportAddress, Long>{
+	 /**
+     * 获取所有对应行政级别的信息
+     * @return
+     */
+	List<SupportAddress> findAllByLevel(String level);
+}

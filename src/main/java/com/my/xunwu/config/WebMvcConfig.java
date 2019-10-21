@@ -82,12 +82,12 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
 	}
 	
 	/**
-     * Bean Util
+     * Bean Util,复制bean(功能强大，效率高)
      * @return
      */
-//    @Bean
-//    public ModelMapper modelMapper() {
-//        return new ModelMapper();
-//    }
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 	
 }
