@@ -9,10 +9,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.my.xunwu.entity.Subway;
+import com.my.xunwu.entity.SubwayStation;
 import com.my.xunwu.entity.SupportAddress;
 import com.my.xunwu.entity.SupportAddress.Level;
+import com.my.xunwu.repository.SubwayRepository;
+import com.my.xunwu.repository.SubwayStationRepository;
 import com.my.xunwu.repository.SupportAddressRepository;
 import com.my.xunwu.service.ServiceMultiResult;
+import com.my.xunwu.web.dto.SubwayDTO;
+import com.my.xunwu.web.dto.SubwayStationDTO;
 import com.my.xunwu.web.dto.SupportAddressDTO;
 
 /**
@@ -25,6 +31,10 @@ public class AddressServiceImpl implements IAddressService{
 	
 	@Autowired
 	private SupportAddressRepository supportAddressRepository;
+	@Autowired
+	private SubwayRepository subwayRepository;
+	@Autowired
+	private SubwayStationRepository subwayStationRepository;
 	@Autowired
 	private ModelMapper modelMapper;
 	
@@ -65,6 +75,29 @@ public class AddressServiceImpl implements IAddressService{
 			result.add(modelMapper.map(region, SupportAddressDTO.class));
 		}
 		return new ServiceMultiResult<>(regions.size(),result);
+	}
+
+	@Override
+	public List<SubwayDTO> findAllSubwayByCity(String cityEnName) {
+		List<SubwayDTO> result = new ArrayList<>();
+        List<Subway> subways = subwayRepository.findAllByCityEnName(cityEnName);
+        if (subways.isEmpty()) {
+            return result;
+        }
+
+        subways.forEach(subway -> result.add(modelMapper.map(subway, SubwayDTO.class)));
+        return result;
+	}
+
+	@Override
+	public List<SubwayStationDTO> findAllStationBySubway(Long subwayId) {
+		List<SubwayStationDTO> result = new ArrayList<>();
+		List<SubwayStation> stations = subwayStationRepository.findAllBySubwayId(subwayId);
+		if(stations.isEmpty()) {
+			return result;
+		}
+		stations.forEach(station -> result.add(modelMapper.map(station, SubwayStationDTO.class)));
+		return result;
 	}
 
 }

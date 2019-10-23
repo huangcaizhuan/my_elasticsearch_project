@@ -1,9 +1,12 @@
 package com.my.xunwu.service.house;
 
+import java.util.List;
 import java.util.Map;
 
 import com.my.xunwu.entity.SupportAddress;
 import com.my.xunwu.service.ServiceMultiResult;
+import com.my.xunwu.web.dto.SubwayDTO;
+import com.my.xunwu.web.dto.SubwayStationDTO;
 import com.my.xunwu.web.dto.SupportAddressDTO;
 
 /**
@@ -30,4 +33,18 @@ public interface IAddressService {
      * @return
      */
     ServiceMultiResult<SupportAddressDTO> findAllRegionsByCityName(String cityName);
+    
+    /**
+     * 获取该城市所有的地铁线路
+     * @param cityEnName
+     * @return
+     */
+    List<SubwayDTO> findAllSubwayByCity(String cityEnName);
+    
+    /**
+     * 获取地铁线路所有的站点
+     * @param subwayId
+     * @return
+     */
+    List<SubwayStationDTO> findAllStationBySubway(Long subwayId);
 }
