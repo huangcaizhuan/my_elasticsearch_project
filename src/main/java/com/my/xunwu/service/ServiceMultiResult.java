@@ -9,18 +9,18 @@ import java.util.List;
  * @param <T>
  */
 public class ServiceMultiResult<T> {
-	private long id;
+	private long total;
 	private List<T> result;
-	public ServiceMultiResult(long id, List<T> result) {
+	public ServiceMultiResult(long total, List<T> result) {
 		super();
-		this.id = id;
+		this.total = total;
 		this.result = result;
 	}
-	public long getId() {
-		return id;
+	public long getTotal() {
+		return total;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setTotal(long total) {
+		this.total = total;
 	}
 	public List<T> getResult() {
 		return result;
