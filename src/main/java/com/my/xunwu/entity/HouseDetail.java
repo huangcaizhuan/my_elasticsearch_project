@@ -32,7 +32,8 @@ public class HouseDetail {
 	@Column(name="rent_way")
 	private int rentWay;
 	
-	private String address;
+	@Column(name = "address")
+	private String detailAddress;
 	
 	@Column(name="subway_line_id")
 	private Long subwayLineId;
@@ -97,12 +98,12 @@ public class HouseDetail {
 		this.rentWay = rentWay;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getDetailAddress() {
+		return detailAddress;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setDetailAddress(String detailAddress) {
+		this.detailAddress = detailAddress;
 	}
 
 	public Long getSubwayLineId() {

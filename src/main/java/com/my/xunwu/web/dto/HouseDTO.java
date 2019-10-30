@@ -59,6 +59,8 @@ public class HouseDTO implements Serializable{
 	
 	private String street;
 	
+	private HouseDetailDTO houseDetail;
+	
 	private List<String> tags;
 
     private List<HousePictureDTO> pictures;
@@ -263,6 +265,14 @@ public class HouseDTO implements Serializable{
 
 	public void setSubscribeStatus(int subscribeStatus) {
 		this.subscribeStatus = subscribeStatus;
+	}
+
+	public HouseDetailDTO getHouseDetail() {
+		return houseDetail;
+	}
+
+	public void setHouseDetail(HouseDetailDTO houseDetail) {
+		this.houseDetail = houseDetail;
 	}
     
 }

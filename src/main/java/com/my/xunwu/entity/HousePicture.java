@@ -13,7 +13,7 @@ import javax.persistence.Table;
  * @date 2019.10.25
  */
 @Entity
-@Table
+@Table(name="house_picture")
 public class HousePicture {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

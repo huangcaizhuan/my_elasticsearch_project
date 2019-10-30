@@ -1,6 +1,7 @@
 package com.my.xunwu.web.controller.admin;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class AdminController {
             return ApiResponse.ofStatus(ApiResponse.Status.NOT_VALID_PARAMS);
         }
 		//********实现本地上传****start
-		/*
+		
 		String fileName = file.getOriginalFilename();
         File target = new File("F:/test/xunwu/images/"+fileName);
         try {
@@ -84,12 +85,17 @@ public class AdminController {
 			e.printStackTrace();
 			return ApiResponse.ofStatus(ApiResponse.Status.INTERNAL_SERVICE_ERROR);
 		}
-		return ApiResponse.ofSuccess(null);
-		*/
+        QiNiuPutRet ret =new QiNiuPutRet();//模拟七牛云上传返回的数据
+        ret.setBucket("bucket");
+        ret.setHash("hash");
+        ret.setHeight(1024);
+        ret.setKey(fileName);
+        ret.setWidth(683);
+		return ApiResponse.ofSuccess(ret);
       //*****实现本地上传****end 
 		
 		//七牛云上传
-		try {
+		/*try {
 			InputStream inputStream = file.getInputStream();
 			Response response = iQiNiuService.uploadFile(inputStream);
 			if(response.isOK()) {
@@ -107,7 +113,7 @@ public class AdminController {
 			} 
 		}catch (IOException e) {
 			return  ApiResponse.ofStatus(ApiResponse.Status.INTERNAL_SERVICE_ERROR);
-		}
+		}*/
 	}
 	/**
 	 * 新增房源接口

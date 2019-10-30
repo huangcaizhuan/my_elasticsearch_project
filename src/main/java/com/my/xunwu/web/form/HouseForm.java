@@ -25,7 +25,7 @@ public class HouseForm {
 	private String regionEnName;
 	
 	@NotNull(message="必须填写街道")
-	@Size(max=1,message="非法的街道")
+	@Size(min=1,message="非法的街道")
 	private String street;
 	
 	@NotNull(message="必须填写小区")

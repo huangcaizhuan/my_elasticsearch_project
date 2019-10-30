@@ -1,7 +1,5 @@
 package com.my.xunwu.base;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.my.xunwu.entity.User;
