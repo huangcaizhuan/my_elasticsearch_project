@@ -23,10 +23,12 @@ import com.my.xunwu.repository.HouseRepository;
 import com.my.xunwu.repository.HouseTagRepository;
 import com.my.xunwu.repository.SubwayRepository;
 import com.my.xunwu.repository.SubwayStationRepository;
+import com.my.xunwu.service.ServiceMultiResult;
 import com.my.xunwu.service.ServiceResult;
 import com.my.xunwu.web.dto.HouseDTO;
 import com.my.xunwu.web.dto.HouseDetailDTO;
 import com.my.xunwu.web.dto.HousePictureDTO;
+import com.my.xunwu.web.form.DataTableSearch;
 import com.my.xunwu.web.form.HouseForm;
 import com.my.xunwu.web.form.PhotoForm;
 
@@ -155,5 +157,18 @@ public class HouseServiceImpl implements IHouseService{
 		detail.setRoundService(houseForm.getRoundService());
 		detail.setTraffic(houseForm.getTraffic());
 		return null;
+	}
+	
+	@Override
+	public ServiceMultiResult<HouseDTO> adminQuery(DataTableSearch searchBody) {
+		List<HouseDTO> houseDTOs = new ArrayList<>();
+		
+		Iterable<House> houses = houseRepository.findAll();
+		houses.forEach(house->{
+			HouseDTO houseDTO = modelMapper.map(house, HouseDTO.class);
+			houseDTOs.add(houseDTO);
+		});
+		
+		return new ServiceMultiResult<>(houseDTOs.size(), houseDTOs);
 	}
 }

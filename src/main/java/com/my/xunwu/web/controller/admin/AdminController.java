@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
+import com.my.xunwu.base.ApiDataTableResponse;
 import com.my.xunwu.base.ApiResponse;
 import com.my.xunwu.entity.SupportAddress;
+import com.my.xunwu.service.ServiceMultiResult;
 import com.my.xunwu.service.ServiceResult;
 import com.my.xunwu.service.house.IAddressService;
 import com.my.xunwu.service.house.IHouseService;
@@ -30,6 +32,7 @@ import com.my.xunwu.service.house.IQiNiuService;
 import com.my.xunwu.web.dto.HouseDTO;
 import com.my.xunwu.web.dto.QiNiuPutRet;
 import com.my.xunwu.web.dto.SupportAddressDTO;
+import com.my.xunwu.web.form.DataTableSearch;
 import com.my.xunwu.web.form.HouseForm;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -146,5 +149,19 @@ public class AdminController {
 	@GetMapping("/admin/house/list")
 	public String houseListPage() {
 		return "admin/house-list";
+	}
+	
+	@PostMapping("/admin/houses")
+	@ResponseBody
+	public ApiDataTableResponse houses(@ModelAttribute DataTableSearch searchBody) {
+		
+		ServiceMultiResult<HouseDTO> result = houseService.adminQuery(searchBody);
+		
+		ApiDataTableResponse response = new ApiDataTableResponse(ApiResponse.Status.SUCCESS);
+		response.setData(result.getResult());
+		response.setRecordsFiltered(result.getTotal());
+		response.setRecordsTotal(result.getTotal());
+		response.setDraw(searchBody.getDraw());
+		return response;
 	}
 }

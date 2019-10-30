@@ -1,7 +1,9 @@
 package com.my.xunwu.service.house;
 
+import com.my.xunwu.service.ServiceMultiResult;
 import com.my.xunwu.service.ServiceResult;
 import com.my.xunwu.web.dto.HouseDTO;
+import com.my.xunwu.web.form.DataTableSearch;
 import com.my.xunwu.web.form.HouseForm;
 
 /**
@@ -11,4 +13,6 @@ import com.my.xunwu.web.form.HouseForm;
  */
 public interface IHouseService {
 	ServiceResult<HouseDTO> save(HouseForm houseForm);
+	
+	ServiceMultiResult<HouseDTO> adminQuery(DataTableSearch searchBody);
 }

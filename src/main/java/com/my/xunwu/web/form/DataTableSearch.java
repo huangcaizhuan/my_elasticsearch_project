@@ -1,0 +1,101 @@
+package com.my.xunwu.web.form;
+
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+/**
+ * DataTable插件固定表单
+ * @author hcz
+ * @date 2019.10.30
+ */
+public class DataTableSearch {
+	/**
+     * Datatables要求回显字段
+     */
+	private int draw;
+	
+	/**
+     * Datatables规定分页字段
+     */
+	private int start;
+	private int length;
+	
+	/**
+	 * 状态码（Integer可不传）
+	 */
+	private Integer status;
+	
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date createTimeMin;
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date createTimeMax;
+	
+	private String cuty;
+	private String title;
+	private String direction;
+	/**
+	 * 排序
+	 */
+	private String orderBy;
+	public int getDraw() {
+		return draw;
+	}
+	public void setDraw(int draw) {
+		this.draw = draw;
+	}
+	public int getStart() {
+		return start;
+	}
+	public void setStart(int start) {
+		this.start = start;
+	}
+	public int getLength() {
+		return length;
+	}
+	public void setLength(int length) {
+		this.length = length;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public Date getCreateTimeMin() {
+		return createTimeMin;
+	}
+	public void setCreateTimeMin(Date createTimeMin) {
+		this.createTimeMin = createTimeMin;
+	}
+	public Date getCreateTimeMax() {
+		return createTimeMax;
+	}
+	public void setCreateTimeMax(Date createTimeMax) {
+		this.createTimeMax = createTimeMax;
+	}
+	public String getCuty() {
+		return cuty;
+	}
+	public void setCuty(String cuty) {
+		this.cuty = cuty;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getDirection() {
+		return direction;
+	}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+	public String getOrderBy() {
+		return orderBy;
+	}
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+}
