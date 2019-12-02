@@ -8,6 +8,10 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.my.xunwu.base.LoginUserUtil;
@@ -162,8 +166,13 @@ public class HouseServiceImpl implements IHouseService{
 	@Override
 	public ServiceMultiResult<HouseDTO> adminQuery(DataTableSearch searchBody) {
 		List<HouseDTO> houseDTOs = new ArrayList<>();
+		//分页
+		Sort sort = new Sort(Sort.Direction.fromString(searchBody.getDirection()),searchBody.getOrderBy());
+		int page = searchBody.getStart()/searchBody.getLength();
+		Pageable pageable = new PageRequest(page, searchBody.getLength(),sort);
+		Page<House> houses = houseRepository.findAll(pageable);
 		
-		Iterable<House> houses = houseRepository.findAll();
+		//Iterable<House> houses = houseRepository.findAll();
 		houses.forEach(house->{
 			HouseDTO houseDTO = modelMapper.map(house, HouseDTO.class);
 			houseDTOs.add(houseDTO);
