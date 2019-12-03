@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.criteria.Predicate;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.my.xunwu.base.HouseStatus;
 import com.my.xunwu.base.LoginUserUtil;
 import com.my.xunwu.entity.House;
 import com.my.xunwu.entity.HouseDetail;
@@ -170,14 +174,39 @@ public class HouseServiceImpl implements IHouseService{
 		Sort sort = new Sort(Sort.Direction.fromString(searchBody.getDirection()),searchBody.getOrderBy());
 		int page = searchBody.getStart()/searchBody.getLength();
 		Pageable pageable = new PageRequest(page, searchBody.getLength(),sort);
-		Page<House> houses = houseRepository.findAll(pageable);
 		
-		//Iterable<House> houses = houseRepository.findAll();
+		//条件查询
+		Specification<House> specification = (root,query,cb)->{
+			Predicate predicate = cb.equal(root.get("adminId"), LoginUserUtil.getLonginUserId());
+			predicate = cb.and(predicate,cb.notEqual(root.get("status"), HouseStatus.DELETED.getValue()));
+			
+			if(searchBody.getCity() != null) {
+				predicate = cb.and(predicate,cb.equal(root.get("cityEnName"), searchBody.getCity()));
+			}
+			if(searchBody.getStatus() != null) {
+				predicate = cb.and(predicate,cb.equal(root.get("status"), searchBody.getStatus()));
+			}
+			if(searchBody.getCreateTimeMin() != null) {
+				predicate = cb.and(predicate,cb.greaterThanOrEqualTo(root.get("createTime"), searchBody.getCreateTimeMin()));
+			}
+			if(searchBody.getCreateTimeMax() != null) {
+				predicate = cb.and(predicate,cb.lessThanOrEqualTo(root.get("createTime"), searchBody.getCreateTimeMax()));
+			}
+			if(searchBody.getTitle() != null) {
+				predicate = cb.and(predicate,cb.like(root.get("title"), "%"+searchBody.getTitle()+"%"));
+			}
+			return predicate;
+		};
+		Page<House> houses = houseRepository.findAll(specification,pageable);//分页+条件查询
+		
+		//Page<House> houses = houseRepository.findAll(pageable);//分页没条件查询
+		//Iterable<House> houses = houseRepository.findAll();//查询所有
 		houses.forEach(house->{
 			HouseDTO houseDTO = modelMapper.map(house, HouseDTO.class);
+			houseDTO.setCover(this.cdnPrefix+house.getCover());
 			houseDTOs.add(houseDTO);
 		});
-		
-		return new ServiceMultiResult<>(houseDTOs.size(), houseDTOs);
+		//return new ServiceMultiResult<>(houseDTOs.size(), houseDTOs);//不分页
+		return new ServiceMultiResult<>(houses.getTotalElements(), houseDTOs);//分页
 	}
 }

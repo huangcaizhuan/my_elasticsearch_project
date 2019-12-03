@@ -31,7 +31,7 @@ public class DataTableSearch {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date createTimeMax;
 	
-	private String cuty;
+	private String city;
 	private String title;
 	private String direction;
 	/**
@@ -74,11 +74,11 @@ public class DataTableSearch {
 	public void setCreateTimeMax(Date createTimeMax) {
 		this.createTimeMax = createTimeMax;
 	}
-	public String getCuty() {
-		return cuty;
+	public String getCity() {
+		return city;
 	}
-	public void setCuty(String cuty) {
-		this.cuty = cuty;
+	public void setCity(String city) {
+		this.city = city;
 	}
 	public String getTitle() {
 		return title;
