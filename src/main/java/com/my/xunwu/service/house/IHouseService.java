@@ -14,5 +14,13 @@ import com.my.xunwu.web.form.HouseForm;
 public interface IHouseService {
 	ServiceResult<HouseDTO> save(HouseForm houseForm);
 	
+	ServiceResult update(HouseForm houseForm);
+	
 	ServiceMultiResult<HouseDTO> adminQuery(DataTableSearch searchBody);
+	/**
+	 * 查询完整房源信息
+	 * @param id
+	 * @return
+	 */
+	ServiceResult<HouseDTO> findCompleteOne(Long id);
 }

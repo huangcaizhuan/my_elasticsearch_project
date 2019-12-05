@@ -18,7 +18,7 @@ public class LoginUserUtil {
 		return null;
 	}
 	
-	public static Long getLonginUserId() {
+	public static Long getLoginUserId() {
 		User user = load();
 		if(user == null) {
 			return -1L;

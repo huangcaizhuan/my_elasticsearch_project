@@ -12,6 +12,8 @@ import javax.validation.constraints.Size;
  * @date 2019.10.25
  */
 public class HouseForm {
+	private Long id;
+	
 	@NotNull(message="大标题不允许为空")
 	@Size(min=1,max=30,message="标题长度必须在1~30之间")
 	private String title;
@@ -286,5 +288,13 @@ public class HouseForm {
 
 	public void setPhotos(List<PhotoForm> photos) {
 		this.photos = photos;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

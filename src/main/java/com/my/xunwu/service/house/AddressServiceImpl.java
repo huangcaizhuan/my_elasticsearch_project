@@ -17,6 +17,7 @@ import com.my.xunwu.repository.SubwayRepository;
 import com.my.xunwu.repository.SubwayStationRepository;
 import com.my.xunwu.repository.SupportAddressRepository;
 import com.my.xunwu.service.ServiceMultiResult;
+import com.my.xunwu.service.ServiceResult;
 import com.my.xunwu.web.dto.SubwayDTO;
 import com.my.xunwu.web.dto.SubwayStationDTO;
 import com.my.xunwu.web.dto.SupportAddressDTO;
@@ -98,6 +99,29 @@ public class AddressServiceImpl implements IAddressService{
 		}
 		stations.forEach(station -> result.add(modelMapper.map(station, SubwayStationDTO.class)));
 		return result;
+	}
+
+	@Override
+	public ServiceResult<SubwayStationDTO> findSubwayStation(Long subwayStationId) {
+	 if (subwayStationId == null) {
+            return ServiceResult.notFound();
+        }
+        SubwayStation station = subwayStationRepository.findOne(subwayStationId);
+        if (station == null) {
+            return ServiceResult.notFound();
+        }
+        return ServiceResult.of(modelMapper.map(station, SubwayStationDTO.class));
+	}
+
+	@Override
+	public ServiceResult<SubwayDTO> findSubway(Long subwayLineId) {
+		if (subwayLineId == null) {
+            return ServiceResult.notFound();
+        }
+        Subway subway = subwayRepository.findOne(subwayLineId);
+        if (subway == null) {            return ServiceResult.notFound();
+        }
+        return ServiceResult.of(modelMapper.map(subway, SubwayDTO.class));
 	}
 
 }

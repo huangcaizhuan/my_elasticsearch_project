@@ -6,4 +6,6 @@ import com.my.xunwu.entity.HouseDetail;
 
 public interface HouseDetailRepository extends CrudRepository<HouseDetail, Long>{
 
+	HouseDetail findAllByHouseId(Long id);
+
 }

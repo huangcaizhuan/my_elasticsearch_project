@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,7 +31,10 @@ import com.my.xunwu.service.house.IAddressService;
 import com.my.xunwu.service.house.IHouseService;
 import com.my.xunwu.service.house.IQiNiuService;
 import com.my.xunwu.web.dto.HouseDTO;
+import com.my.xunwu.web.dto.HouseDetailDTO;
 import com.my.xunwu.web.dto.QiNiuPutRet;
+import com.my.xunwu.web.dto.SubwayDTO;
+import com.my.xunwu.web.dto.SubwayStationDTO;
 import com.my.xunwu.web.dto.SupportAddressDTO;
 import com.my.xunwu.web.form.DataTableSearch;
 import com.my.xunwu.web.form.HouseForm;
@@ -163,5 +167,59 @@ public class AdminController {
 		response.setRecordsTotal(result.getTotal());
 		response.setDraw(searchBody.getDraw());
 		return response;
+	}
+	
+	@GetMapping("/admin/house/edit")
+	public String houseEditPage(@RequestParam("id")Long id,Model model) {
+		if(id ==null || id < 1) {
+			return "404";
+		}
+		
+		ServiceResult<HouseDTO>  serviceResult = houseService.findCompleteOne(id);
+		HouseDTO result = serviceResult.getResult();
+		model.addAttribute("house",result);
+		
+		Map<SupportAddress.Level, SupportAddressDTO> adressMap = addressService.findCityAndRegion(result.getCityEnName(), result.getRegionEnName());
+		model.addAttribute("city",adressMap.get(SupportAddress.Level.CITY));
+		model.addAttribute("region",adressMap.get(SupportAddress.Level.REGION));
+		
+		HouseDetailDTO detailDTO = result.getHouseDetail();
+        ServiceResult<SubwayDTO> subwayServiceResult = addressService.findSubway(detailDTO.getSubwayLineId());
+        if (subwayServiceResult.isSuccess()) {
+            model.addAttribute("subway", subwayServiceResult.getResult());
+        }
+
+        ServiceResult<SubwayStationDTO> subwayStationServiceResult = addressService.findSubwayStation(detailDTO.getSubwayStationId());
+        if (subwayStationServiceResult.isSuccess()) {
+            model.addAttribute("station", subwayStationServiceResult.getResult());
+        }
+		
+		return "admin/house-edit";
+	}
+	
+	/**
+	 * 编辑接口
+	 * @param houseForm
+	 * @param bindingResult
+	 * @return
+	 */
+	@PostMapping("/admin/house/edit")
+	@ResponseBody
+	public ApiResponse saveHouse(@Valid @ModelAttribute("form-house-edit")HouseForm houseForm,BindingResult bindingResult) {
+		if(bindingResult.hasErrors()) {
+			return new ApiResponse(HttpStatus.BAD_REQUEST.value(),bindingResult.getAllErrors().get(0).getDefaultMessage(),null);
+		}
+		Map<SupportAddress.Level,SupportAddressDTO> addressMap = addressService.findCityAndRegion(houseForm.getCityEnName(), houseForm.getRegionEnName());
+		if(addressMap.keySet().size() != 2) {
+			return ApiResponse.ofSuccess(ApiResponse.Status.NOT_VALID_PARAMS);
+		}
+		ServiceResult result = houseService.update(houseForm);
+		 if (result.isSuccess()) {
+            return ApiResponse.ofSuccess(null);
+        }
+
+        ApiResponse response = ApiResponse.ofStatus(ApiResponse.Status.BAD_REQUEST);
+        response.setMessage(result.getMessage());
+        return response;
 	}
 }

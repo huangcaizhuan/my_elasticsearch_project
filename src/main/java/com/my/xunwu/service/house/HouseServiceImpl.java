@@ -16,18 +16,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.my.xunwu.base.HouseStatus;
 import com.my.xunwu.base.LoginUserUtil;
 import com.my.xunwu.entity.House;
 import com.my.xunwu.entity.HouseDetail;
 import com.my.xunwu.entity.HousePicture;
+import com.my.xunwu.entity.HouseSubscribe;
 import com.my.xunwu.entity.HouseTag;
 import com.my.xunwu.entity.Subway;
 import com.my.xunwu.entity.SubwayStation;
 import com.my.xunwu.repository.HouseDetailRepository;
 import com.my.xunwu.repository.HousePictureRepository;
 import com.my.xunwu.repository.HouseRepository;
+import com.my.xunwu.repository.HouseSubscribeRepository;
 import com.my.xunwu.repository.HouseTagRepository;
 import com.my.xunwu.repository.SubwayRepository;
 import com.my.xunwu.repository.SubwayStationRepository;
@@ -62,6 +65,8 @@ public class HouseServiceImpl implements IHouseService{
 	private HousePictureRepository housePictureRepository;
 	@Autowired
 	private HouseTagRepository houseTagRepository;
+	@Autowired
+	private HouseSubscribeRepository houseSubscribeRespository;
 	
 	@Value("${qiniu.cdn.prefix}")
     private String cdnPrefix;
@@ -82,7 +87,7 @@ public class HouseServiceImpl implements IHouseService{
 		Date now = new Date();
 		house.setCreateTime(now);
 		house.setLastUpdateTime(now);
-		house.setAdminId(LoginUserUtil.getLonginUserId());
+		house.setAdminId(LoginUserUtil.getLoginUserId());
 		houseRepository.save(house);
 		
 		detail.setHouseId(house.getId());
@@ -177,7 +182,7 @@ public class HouseServiceImpl implements IHouseService{
 		
 		//条件查询
 		Specification<House> specification = (root,query,cb)->{
-			Predicate predicate = cb.equal(root.get("adminId"), LoginUserUtil.getLonginUserId());
+			Predicate predicate = cb.equal(root.get("adminId"), LoginUserUtil.getLoginUserId());
 			predicate = cb.and(predicate,cb.notEqual(root.get("status"), HouseStatus.DELETED.getValue()));
 			
 			if(searchBody.getCity() != null) {
@@ -208,5 +213,83 @@ public class HouseServiceImpl implements IHouseService{
 		});
 		//return new ServiceMultiResult<>(houseDTOs.size(), houseDTOs);//不分页
 		return new ServiceMultiResult<>(houses.getTotalElements(), houseDTOs);//分页
+	}
+	
+	/**
+	 * 查询完整房源信息
+	 * @param id
+	 * @return
+	 */
+	@Override
+	public ServiceResult<HouseDTO> findCompleteOne(Long id) {
+		House house = houseRepository.findOne(id);
+		if(house == null) {
+			return ServiceResult.notFound();
+		}
+		
+		HouseDTO result = modelMapper.map(house, HouseDTO.class);
+		
+		//房屋详情
+		HouseDetail houseDetail = houseDetailRepository.findAllByHouseId(id);
+		HouseDetailDTO detailDTO = modelMapper.map(houseDetail, HouseDetailDTO.class);
+		result.setHouseDetail(detailDTO);
+		
+		//图片
+		List<HousePicture> pictures = housePictureRepository.findAllByHouseId(id);
+		List<HousePictureDTO> pictureDTOs = new ArrayList<>();
+		pictures.forEach(picture->{
+			pictureDTOs.add(modelMapper.map(picture, HousePictureDTO.class));
+		});
+		result.setPictures(pictureDTOs);
+		
+		//标签
+		List<HouseTag> tags = houseTagRepository.findAllByHouseId(id);
+	    List<String> tagList = new ArrayList<>();
+	    tags.forEach(tag->{
+	    	tagList.add(tag.getName());
+	    });
+	    result.setTags(tagList);
+	    
+	   /* if(LoginUserUtil.getLoginUserId() > 0) {//已登录用户
+	    	HouseSubscribe subscribe = houseSubscribeRespository.findByHouseIdAndUserId(house.getId(), LoginUserUtil.getLoginUserId());
+            if (subscribe != null) {
+                result.setSubscribeStatus(subscribe.getStatus());
+            }
+	    }*/
+		
+		return ServiceResult.of(result);
+	}
+	
+	@Override
+	@Transactional
+	public ServiceResult update(HouseForm houseForm) {
+		House house = houseRepository.findOne(houseForm.getId());
+		if(house == null) {
+			return ServiceResult.notFound();
+		}
+		
+		HouseDetail detail = houseDetailRepository.findAllByHouseId(houseForm.getId());
+		if(detail == null) {
+			return ServiceResult.notFound();
+		}
+		
+		ServiceResult  wrapperDetail = wrapperDetailInfo(detail,houseForm);
+		if (wrapperDetail != null) {
+            return wrapperDetail;
+        }
+		houseDetailRepository.save(detail);
+		
+		List<HousePicture> pictures = generatePictures(houseForm, houseForm.getId());
+		housePictureRepository.save(pictures);
+		
+		if (houseForm.getCover() == null) {
+            houseForm.setCover(house.getCover());
+        }
+		
+		modelMapper.map(houseForm, house);
+        house.setLastUpdateTime(new Date());
+        houseRepository.save(house);
+
+        return ServiceResult.success();
 	}
 }

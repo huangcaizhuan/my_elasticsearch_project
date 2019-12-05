@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.my.xunwu.entity.SupportAddress;
 import com.my.xunwu.service.ServiceMultiResult;
+import com.my.xunwu.service.ServiceResult;
 import com.my.xunwu.web.dto.SubwayDTO;
 import com.my.xunwu.web.dto.SubwayStationDTO;
 import com.my.xunwu.web.dto.SupportAddressDTO;
@@ -47,4 +48,8 @@ public interface IAddressService {
      * @return
      */
     List<SubwayStationDTO> findAllStationBySubway(Long subwayId);
+    
+	ServiceResult<SubwayStationDTO> findSubwayStation(Long subwayStationId);
+	
+	ServiceResult<SubwayDTO> findSubway(Long subwayLineId);
 }
